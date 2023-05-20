@@ -4,65 +4,85 @@
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <script src="/socket.io/socket.io.js"></script>
-    <script defer  type="module" src="js/script.js"></script>
-    <script defer  type="module"  src="js/game.client.js""></script>
+    <script defer type="module" src="./js/script.js"></script>
+    <script defer type="module" src="./js/game.client.js"></script>
+
 </head>
 
 <body>
     <div class="container">
         <div id="divAutenticacion">
-            <div id="panelLogin" class="panel animate__animated">
-                <form name="formLogin" id="formLogin">
-                    <h2 class="text1">Log in</h2>
-                    <div id="lblStatus"></div>
-                    <div class="formField">
-                        <label for="username" class="text2">Username o email</label>
-                        <input name="username" />
-                    </div>
-                    <div class="formField">
-                        <label for=password class="text2">Password</label>
-                        <input name="password" />
-                    </div>
-                    <div class="formField">
-                        <button> Log In </button>
-                    </div>
-    
-                </form>
-                <a class="panelFooter">Eres nuevo? &nbsp;
-                    <span class="btn" onclick="goToRegister()">Registrate</span>
-                </a>
-            </div>
-    
-            <div id="panelRegistro" class="panel hide animate__animated">
+            <div id="panelRegistro" class="panel animate__animated">
                 <form name="formRegistro" id="formRegistro">
                     <h2 class="text1">Sign UP</h2>
                     <div id="lblStatus"></div>
                     <div class="formField">
-                        <label for="username" class="text2">Username or email</label>
-                        <input name="username" />
+                        <input name="username" placeholder="Username" required />
                     </div>
                     <div class="formField">
-                        <label for=password class="text2">Password</label>
-                        <input name="password" />
+                        <input name="email" placeholder="Email" required />
                     </div>
                     <div class="formField">
-                        <button> Sign Up </button>
+                        <input name="password" type="password" placeholder="Password" id="password" required />
+                        <span class="icon-password show-password"></span>
                     </div>
-    
+                    <div class="formField">
+                        <button onclick="goToLobby()"> Sign Up </button>
+                    </div>
+
                 </form>
-                <a class="panelFooter">Ya tienes cuenta? &nbsp;
-                    <span class="btn" onclick="goToLogin()">Inicia sesion</span>
+                <a class="panelFooter">Already have an account? &nbsp;
+                    <span class="btn" id="btngoToLogin">Log In</span>
+                </a>
+            </div>
+
+            <div id="panelLogin" class="panel hide animate__animated">
+                <form name="formLogin" id="formLogin">
+                    <h2 class="text1">Log in</h2>
+                    <div id="lblStatus"></div>
+                    <div class="formField">
+                        <input name="username" placeholder="Email" required />
+                    </div>
+                    <div class="formField">
+                        <input name="password" type="password" placeholder="Password" id="password" required />
+                        <span class="icon-password show-password"></span>
+                    </div>
+                    <div class="formField">
+                        <button onclick="goToLobby()"> Log In </button>
+                    </div>
+
+                </form>
+                <a class="panelFooter">Don't have an account? &nbsp;
+                    <span class="btn" id="btnGoToRegister">Sign In</span>
                 </a>
             </div>
         </div>
-        <div id="divLobby">
-            <h1>LOBBIE</h1>
-            <canvas id="myCanvas"  width="500" height="400"></canvas>
-            <button id="findMatch">Find Match</button>
+    </div>
+
+    <div id="divLobby">
+        <h1>WELCOME TO THE LOBBY
+            <span id="userConnected"></span>
+        </h1>
+        <div id="divUsers">
+            <span id="connectedPlayers">Connected players:</span>
+            <ul id="onlineUsers"></ul>
+            <span id="lblOnlineUsersCount"></span>
         </div>
-        <div id="divLobby">
-            <h1>Game</h1>
+        <div>
+            <button id="findMatch" id="btngoToGame">Find Match</button>
         </div>
+        <div id="lblSearching"></div>
+        <button id="btnLogout" onclick="logout()">Log Out</button>
+    </div>
+
+    <div id="divGame" class="hide">
+        <h1>GAME ROOM</h1>
+        <div>
+            <h3>Controls:</h3>
+            <p>
+                Move the paddle: ↑ and ↓ ... Pause/Resume: SPACE</p>
+        </div>
+        <canvas id="myCanvas" width="500" height="400"></canvas>
     </div>
 </body>
 

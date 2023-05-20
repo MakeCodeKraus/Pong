@@ -67,6 +67,7 @@ app.post("/auth/signup", async (req, res) => {
     });
   }
 });
+
 app.post("/auth/login", async (req, res) => {
   //Verificar el body de la petición
   const { email, password } = req.body;
@@ -111,6 +112,7 @@ app.post("/auth/login", async (req, res) => {
     token,
   });
 });
+
 app.post("/auth/check", async (req, res) => {
   try {
     const token = req.headers["x-token"];
@@ -141,6 +143,7 @@ app.post("/auth/check", async (req, res) => {
     });
   }
 });
+
 io.on("connection", async (socket) => {
   const { token } = socket.handshake.auth;
   const uid = validarJWT(token);
@@ -155,39 +158,53 @@ io.on("connection", async (socket) => {
   console.log(user.username + " connected");
   user.socketId = socket.id;
   socket.broadcast.emit("UserConnected", user);
-  usersConnected.push({ user });
-  socket.on("KnockKnock", () => {
-    console.log("Knock Knock");
-  });
-  socket.on("FindMatch", () => {
+  usersConnected.push(user);
+
+  socket.emit('onlineUsers', usersConnected);
+  console.log('Users connected:', usersConnected);
+  io.emit('onlineUsers', usersConnected);
+
+  socket.on("findMatch", () => {
     console.log(user.username + " esta buscando partida");
     matchmaking.push(user);
 
     if (matchmaking.length == 2) {
-      const player1 = matchmaking.pop();
-      const player2 = matchmaking.pop();
+      const player1 = matchmaking.shift();
+      const player2 = matchmaking.shift();
       const roomId = player1.socketId + "-" + player2.socketId;
       rooms.push(roomId);
       console.log(roomId);
 
-      io.sockets.sockets.get(player1.socketId).join(roomId);
-      io.sockets.sockets.get(player2.socketId).join(roomId);
-
-      io.to(roomId).emit("MatchReady");
+      io.to(player1.socketId).emit("MatchReady", roomId);
+      io.to(player2.socketId).emit("MatchReady", roomId);
 
       game.spawnPlayer(player1.id, player1.username);
       game.spawnPlayer(player2.id, player2.username);
 
       StartGame(roomId);
+
+      matchmaking = [];
+    }
+  });
+
+  socket.on('stopSearchMatch', () => {
+    const index = matchmaking.findIndex(u => u.id === user.id);
+    if (index !== -1) {
+      matchmaking.splice(index, 1);
     }
   });
 
   socket.on("move", (axis) => {
     game.setAxis(user.id, axis);
   });
-  socket.on("disconnect", () => {
-    usersConnected = usersConnected.filter((u) => u.id != user.id);
+
+  socket.on('disconnect', () => {
+    console.log(user.username + " disconnected");
     socket.broadcast.emit("userDisconnected", user);
+    const index = usersConnected.findIndex(u => u.id === user.id);
+    if (index !== -1) {
+      usersConnected.splice(index, 1);
+    }
   });
 });
 

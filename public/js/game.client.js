@@ -26,14 +26,28 @@ function draw() {
     drawPlayer(STATE.player1);
     drawPlayer(STATE.player2);
     drawBall(STATE.ball);
+    // Dibuja el nombre de usuario de cada jugador sobre su barra
+    ctx.font = "bold 16px sans-serif";
+    ctx.fillStyle = "white";
+    ctx.fillText(STATE.player1.username, 10, STATE.player1.y - 10);
+    ctx.fillText(STATE.player2.username, 400, STATE.player2.y - 10);
+
+    // Dibuja el puntaje de cada jugador en la parte superior del canvas
+    ctx.font = "bold 32px sans-serif";
+    ctx.fillStyle = "white";
+    ctx.fillText(`${STATE.score1} - ${STATE.score2}`, 220, 40);
   }
 }
 
 function loop() {
-  draw();
+    draw();
 }
 
 export function updateState(state) {
   STATE = state;
+  console.log("Updated state:", STATE);
 }
+
 setInterval(loop, 100);
+
+
