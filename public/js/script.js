@@ -88,15 +88,20 @@ function ConnectWebSocket(token) {
     removeOnlineUser(data.username);
   });
 
-  socket.on("MatchReady", function (data) {
-    divLobby.style.visibility = "hidden";
-    console.log("Match ready");
-    document.removeEventListener("playerMove", playerMove);
+  socket.on("GameRoom", function (data) {
+    console.log("Game Room");
     goToGame();
   });
 
+  socket.on("MatchReady", function (data) {
+    // divLobby.style.visibility = "hidden";
+    // divGame.style.visibility = "visible";
+    console.log("Match ready");
+    document.addEventListener("playerMove", playerMove);
+  });
   socket.on("updateState", function (data) {
     updateState(data);
+    draw();
   });
 
   socket.on("score", (score) => {
@@ -173,7 +178,6 @@ function ConnectWebSocket(token) {
   function startMatchSearch() {
     socket.emit("findMatch"); 
     searching = true;
-    searchAnimationInterval = setInterval(searchingAnimation, 400);
     document.getElementById("findMatch").innerHTML = "Cancel";
   }
 
@@ -181,7 +185,6 @@ function ConnectWebSocket(token) {
     socket.emit("stopSearchMatch"); 
     searching = false;
     clearInterval(searchAnimationInterval);
-    lblSearching.innerHTML = "";
     document.getElementById("findMatch").innerHTML = "Find Game";
   }
 
@@ -208,6 +211,8 @@ function goToGame() {
   document.getElementById("divLobby").style.display = "none";
   document.getElementById("divGame").style.display = "block";
 }
+
+document.getElementById("gameRoom").onclick = goToGame;
 
 document.getElementById('formRegistro').onsubmit = async (e) => {
   e.preventDefault();
@@ -250,16 +255,6 @@ document.getElementById("formLogin").onsubmit = async (e) => {
   }
 };
 
-function searchingAnimation() {
-  let searchText = lblSearching.innerHTML;
-  if (searchText == "") {
-    lblSearching.innerHTML = "Looking for an available game";
-  } else if (searchText.split(".").length < 4) {
-    lblSearching.innerHTML += ".";
-  } else {
-    lblSearching.innerHTML = "Looking for an available game";
-  }
-}
 
 function logout() {
   localStorage.removeItem("token");

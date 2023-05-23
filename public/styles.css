@@ -132,6 +132,16 @@ canvas {
   font-size: medium;
 }
 
+#gameRoom {
+  width: 100%;
+  height: 35px;
+  background-color: white;
+  border-radius: 5px;
+  color: #241f3c;
+  font-family: retro;
+  font-size: medium;
+}
+
 #btnLogout {
   width: 100%;
   height: 35px;

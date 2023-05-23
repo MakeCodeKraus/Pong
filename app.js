@@ -164,6 +164,8 @@ io.on("connection", async (socket) => {
   console.log('Users connected:', usersConnected);
   io.emit('onlineUsers', usersConnected);
 
+  game.initialize(io);
+
   socket.on("findMatch", () => {
     console.log(user.username + " esta buscando partida");
     matchmaking.push(user);
@@ -191,6 +193,10 @@ io.on("connection", async (socket) => {
     const index = matchmaking.findIndex(u => u.id === user.id);
     if (index !== -1) {
       matchmaking.splice(index, 1);
+    }
+
+    if (matchmaking.length === 0) {
+      game.cancelMatch();
     }
   });
 

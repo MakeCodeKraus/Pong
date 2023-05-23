@@ -2,6 +2,7 @@ const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
 let STATE = {};
+let paused = false;
 
 function drawPlayer(player) {
   ctx.beginPath();
@@ -26,28 +27,44 @@ function draw() {
     drawPlayer(STATE.player1);
     drawPlayer(STATE.player2);
     drawBall(STATE.ball);
-    // Dibuja el nombre de usuario de cada jugador sobre su barra
+
     ctx.font = "bold 16px sans-serif";
     ctx.fillStyle = "white";
     ctx.fillText(STATE.player1.username, 10, STATE.player1.y - 10);
     ctx.fillText(STATE.player2.username, 400, STATE.player2.y - 10);
 
-    // Dibuja el puntaje de cada jugador en la parte superior del canvas
     ctx.font = "bold 32px sans-serif";
     ctx.fillStyle = "white";
-    ctx.fillText(`${STATE.score1} - ${STATE.score2}`, 220, 40);
+    ctx.fillText(`${STATE.score1} - ${STATE.score2}`, 225, 40);
+  }
+  if (paused) {
+    ctx.font = "bold 48px sans-serif";
+    ctx.fillStyle = "white";
+    ctx.fillText("Juego en pausa", 130, 200);
   }
 }
 
 function loop() {
+  if (!paused) {
     draw();
+  }
 }
 
 export function updateState(state) {
-  STATE = state;
-  console.log("Updated state:", STATE);
+  STATE = { ...state };
+
+  if (state.score) {
+    STATE.score1 = state.score.player1;
+    STATE.score2 = state.score.player2;
+  }
+
+  console.log("Puntaje recibido del servidor:", STATE.score1, "-", STATE.score2);
 }
 
-setInterval(loop, 100);
+document.addEventListener("keydown", function (event) {
+  if (event.key === " ") {
+    paused = !paused;
+  }
+});
 
-
+setInterval(loop, 200);

@@ -7,6 +7,10 @@ export default class Ball {
     this.dx = this.speed;
     this.dy = this.speed;
     this.color = "#" + Math.floor(Math.random() * 16777215).toString(16);
+    this.score = {
+      player1: 0,
+      player2: 0,
+    };
   }
 
   draw(ctx) {
@@ -29,6 +33,11 @@ export default class Ball {
       this.x + this.dx > width - this.radius ||
       this.x + this.dx < this.radius
     ) {
+      if (this.x + this.dx > width - this.radius) {
+        this.score.player1++; // Aumentar el puntaje del Jugador 1
+      } else {
+        this.score.player2++; // Aumentar el puntaje del Jugador 2
+      }
       this.x = width / 2;
       this.y = height / 2;
       this.dx = Math.random() * 2 - 1; // asignar una dirección horizontal aleatoria
